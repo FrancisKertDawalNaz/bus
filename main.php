@@ -1,4 +1,4 @@
-<?php include_once('template/mainheader.php') 
+<?php include_once('template/mainheader.php')
 
 ?>
 
@@ -41,19 +41,33 @@
                     <h5 class="modal-title" id="sosModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Emergency Alert</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <p class="fs-5 mb-0">Are you in danger or need urgent help?</p>
-                    <p>An alert will be sent to the driver and GoTranspo support.</p>
+                <div class="modal-body">
+                    <p class="fs-5 mb-0 text-center">Are you in danger or need urgent help?</p>
+                    <p class="text-center">An alert will be sent to the driver and GoTranspo support.</p>
+
+                    <!-- Emergency Type Selection -->
+                    <div class="mb-3">
+                        <label for="emergencyType" class="form-label">Select Emergency Type</label>
+                        <select class="form-select" id="emergencyType" name="emergency_type" required>
+                            <option value="fire">Fire</option>
+                            <option value="accident">Accident</option>
+                            <option value="mechanical_issue">Mechanical Issue</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer border-0 justify-content-center">
                     <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
                     <form action="send_alert.php" method="post">
+                        <input type="hidden" name="driver_id" value="<?php echo $driver_id; ?>"> <!-- Pass Driver ID if needed -->
                         <button type="submit" class="btn btn-dark px-4">Send Alert</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Review Modal -->
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
@@ -96,31 +110,31 @@
 </main>
 
 <?php if (isset($_SESSION['review_status'])): ?>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        <?php if ($_SESSION['review_status'] === 'success'): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Thank you!',
-                text: 'Your review was submitted successfully.',
-                confirmButtonColor: '#3085d6'
-            });
-        <?php elseif ($_SESSION['review_status'] === 'error'): ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'There was a problem submitting your review.',
-                confirmButtonColor: '#d33'
-            });
-        <?php elseif ($_SESSION['review_status'] === 'invalid'): ?>
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Rating',
-                text: 'Please choose a rating between 1 and 5.',
-                confirmButtonColor: '#f39c12'
-            });
-        <?php endif; ?>
-    });
-</script>
-<?php unset($_SESSION['review_status']); ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            <?php if ($_SESSION['review_status'] === 'success'): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank you!',
+                    text: 'Your review was submitted successfully.',
+                    confirmButtonColor: '#3085d6'
+                });
+            <?php elseif ($_SESSION['review_status'] === 'error'): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'There was a problem submitting your review.',
+                    confirmButtonColor: '#d33'
+                });
+            <?php elseif ($_SESSION['review_status'] === 'invalid'): ?>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Rating',
+                    text: 'Please choose a rating between 1 and 5.',
+                    confirmButtonColor: '#f39c12'
+                });
+            <?php endif; ?>
+        });
+    </script>
+    <?php unset($_SESSION['review_status']); ?>
 <?php endif; ?>
