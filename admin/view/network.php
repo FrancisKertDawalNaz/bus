@@ -39,6 +39,7 @@
                         </span>
                         <input type="text" class="form-control border-start-0" placeholder="Search...">
                     </div>
+                    <img src="../../asset/images/adminpic.jpg" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px;">
                 </div>
             </div>
 

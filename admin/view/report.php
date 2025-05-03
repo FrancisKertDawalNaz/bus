@@ -116,7 +116,7 @@ if (isset($_SESSION['driver_id'])) {
                         </span>
                         <input type="text" class="form-control border-start-0" placeholder="Search here...">
                     </div>
-                    <img src="../../driver/assets/images/user.png" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px;">
+                    <img src="../../asset/images/adminpic.jpg" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px;">
                 </div>
             </div>
             <!-- Reports Section -->
