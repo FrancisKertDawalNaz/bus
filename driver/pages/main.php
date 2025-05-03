@@ -32,8 +32,7 @@ if (!isset($_SESSION['driver_id'])) {
 }
 
 $driver_id = $_SESSION['driver_id'];
-$image_path = '../uploads/default_driver.png';  
-
+$image_path = '../uploads/default_driver.png';
 
 $query = "SELECT image_path FROM drivers WHERE id = ?";
 $stmt = $conn->prepare($query);
@@ -42,14 +41,12 @@ $stmt->execute();
 $stmt->bind_result($image_path);
 
 if ($stmt->fetch()) {
-    
     if (!empty($image_path) && file_exists('../uploads/' . $image_path)) {
-        $image_path = '../uploads/' . $image_path; 
+        $image_path = '../uploads/' . $image_path;
     } else {
-        $image_path = '../uploads/default_driver.png';  
+        $image_path = '../uploads/default_driver.png';
     }
 }
-
 $stmt->close();
 ?>
 
@@ -66,9 +63,8 @@ $stmt->close();
                 <li><a href="./account.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-user me-2"></i> Account</a></li>
                 <li><a href="./reviews.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-star me-2"></i> Reviews</a></li>
                 <li><a href="./tracking.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-location-arrow me-2"></i> GPS Tracking</a></li>
-                <li><a href="./reports.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-file-alt me-2"></i> Reports</a></li> <!-- New: Reports -->
+                <li><a href="./reports.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-file-alt me-2"></i> Reports</a></li>
             </ul>
-
             <ul class="list-unstyled mt-auto">
                 <li><a href="#" class="text-white d-flex align-items-center py-2"><i class="fas fa-life-ring me-2"></i> Help</a></li>
                 <li><a href="./index.php" class="text-white d-flex align-items-center py-2"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
@@ -108,7 +104,10 @@ $stmt->close();
                     </thead>
                     <tbody>
                         <?php
+                        $count = 0;
                         while ($row = $result->fetch_assoc()) {
+                            $count++;
+                            $hiddenClass = ($count > 5) ? 'd-none extra-passenger' : '';
                             $name = $row['name'];
                             $origin = $row['origin'];
                             $destination = $row['destination'];
@@ -118,7 +117,7 @@ $stmt->close();
                             $bus_price = $row['bus_price'];
                             $type = ($origin == 'Station') ? 'Station' : 'Pick-up';
                         ?>
-                            <tr>
+                            <tr class="<?php echo $hiddenClass; ?>">
                                 <td><?php echo htmlspecialchars($name); ?><br><small>Row <?php echo htmlspecialchars($seat_no); ?></small></td>
                                 <td><?php echo htmlspecialchars($booking_date); ?><br><small><?php echo time_ago($booking_date); ?></small></td>
                                 <td>P<?php echo number_format($bus_price, 2); ?><br>Gcash</td>
@@ -126,39 +125,25 @@ $stmt->close();
                                 <td><?php echo htmlspecialchars($type); ?></td>
                             </tr>
                         <?php } ?>
-                    </tbody>                     
+                    </tbody>
                 </table>
 
                 <div class="text-center mt-3">
-                    <a href="#" class="btn btn-outline-primary">Show All My Passengers</a>
+                    <button id="seeMoreBtn" class="btn btn-outline-primary">See More</button>
                 </div>
             </div>
-
-            <!-- Main content -->
-            <div class="flex-fill p-4" style="margin-left: 250px; height: 100vh; overflow-y: auto; background-color: #f0f8ff;">
-                <?php if (isset($_GET['login']) && $_GET['login'] === 'success'): ?>
-                    <script>
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Login Successful',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                <?php endif; ?>
-
-                <?php if (isset($_GET['login']) && $_GET['login'] === 'fail'): ?>
-                    <script>
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Login Failed',
-                            text: 'Incorrect ID or Password!',
-                            confirmButtonText: 'Try Again'
-                        });
-                    </script>
-                <?php endif; ?>
-            </div>
         </div>
+    </div>
 </main>
+
+<script>
+    document.getElementById('seeMoreBtn').addEventListener('click', function () {
+        document.querySelectorAll('.extra-passenger').forEach(function (row) {
+            row.classList.remove('d-none');
+        });
+        this.style.display = 'none';
+    });
+</script>
 
 <?php
 function time_ago($date)

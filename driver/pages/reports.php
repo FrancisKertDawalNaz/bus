@@ -47,6 +47,23 @@ if ($stmt->fetch()) {
 }
 
 $stmt->close();
+
+// Fetch alerts from the database
+$query = "SELECT alert_tb.*, user_tb.username 
+          FROM alert_tb 
+          INNER JOIN user_tb ON alert_tb.user_id = user_tb.id 
+          ORDER BY alert_tb.created_at DESC 
+          LIMIT 3";
+
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$alerts = [];
+
+while ($row = $result->fetch_assoc()) {
+    $alerts[] = $row;
+}
+$stmt->close();
 ?>
 
 <main style="height: 100vh; overflow: hidden;">
@@ -93,36 +110,19 @@ $stmt->close();
             <div class="card p-4">
                 <h4 class="mb-4">User Reports</h4>
 
-                <!-- Static Example Report Entries (Limit to 3 reports) -->
-                <div class="mb-4 border-bottom pb-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-danger">Urgent</span>
+                <?php foreach ($alerts as $alert): ?>
+                    <div class="mb-4 border-bottom pb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge <?php echo ($alert['emergency_type'] == 'fire') ? 'bg-danger' : ($alert['emergency_type'] == 'accident' ? 'bg-warning' : 'bg-info'); ?>">
+                                <?php echo ucfirst($alert['emergency_type']); ?>
+                            </span>
+                        </div>
+                        <p class="mb-1 fw-bold mb-0"><?php echo htmlspecialchars($alert['username']); ?></p>
+                        <p class="mb-1"><strong>Alert Message:</strong> <?php echo htmlspecialchars($alert['alert_message']); ?></p>
+                        <p class="mb-1"><strong>Emergency Type:</strong> <?php echo ucfirst(htmlspecialchars($alert['emergency_type'])); ?></p>
+                        <p class="mb-0"><strong>Created At:</strong> <?php echo htmlspecialchars($alert['created_at']); ?></p>
                     </div>
-                    <p class="mb-1 fw-bold mb-0">John Doe</p>
-                    <p class="mb-1"><strong>Bus ID:</strong> 12345</p>
-                    <p class="mb-1"><strong>Emergency Type:</strong> Fire</p>
-                    <p class="mb-0"><strong>Report Time:</strong> 2025-05-03 10:30:00</p>
-                </div>
-
-                <div class="mb-4 border-bottom pb-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-warning">Critical</span>
-                    </div>
-                    <p class="mb-1 fw-bold mb-0">Jane Smith</p>
-                    <p class="mb-1"><strong>Bus ID:</strong> 67890</p>
-                    <p class="mb-1"><strong>Emergency Type:</strong> Accident</p>
-                    <p class="mb-0"><strong>Report Time:</strong> 2025-05-02 15:45:00</p>
-                </div>
-
-                <div class="mb-4 border-bottom pb-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="badge bg-info">Moderate</span>
-                    </div>
-                    <p class="mb-1 fw-bold mb-0">Tom Brown</p>
-                    <p class="mb-1"><strong>Bus ID:</strong> 11223</p>
-                    <p class="mb-1"><strong>Emergency Type:</strong> Mechanical Issue</p>
-                    <p class="mb-0"><strong>Report Time:</strong> 2025-05-01 08:00:00</p>
-                </div>
+                <?php endforeach; ?>
 
                 <!-- "Show All" Button -->
                 <div class="text-center mt-4">
@@ -131,16 +131,7 @@ $stmt->close();
 
                 <!-- Full List of Reports (Initially hidden) -->
                 <div id="additionalReports" style="display: none;">
-                    <div class="mb-4 border-bottom pb-3">
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="badge bg-secondary">General</span>
-                        </div>
-                        <p class="mb-1 fw-bold mb-0">Alice White</p>
-                        <p class="mb-1"><strong>Bus ID:</strong> 44556</p>
-                        <p class="mb-1"><strong>Emergency Type:</strong> General Issue</p>
-                        <p class="mb-0"><strong>Report Time:</strong> 2025-04-30 12:00:00</p>
-                    </div>
-                    <!-- Add more reports as needed -->
+                    <!-- More reports will be shown here when clicked -->
                 </div>
 
             </div>

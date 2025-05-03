@@ -32,6 +32,7 @@ $stmt->close();
 
 <main style="height: 100vh; overflow: hidden;">
     <div class="d-flex" style="height: 100%;">
+
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
             <div class="text-center mb-4">
@@ -74,9 +75,10 @@ $stmt->close();
                 <h4 class="mb-4">User Reviews</h4>
 
                 <?php
-                $review_query = "SELECT review_name, review_message, rating FROM reviews WHERE driver_id = ? ORDER BY id DESC";
+                $limit = 3; // Limit the number of reviews initially displayed
+                $review_query = "SELECT review_name, review_message, rating FROM reviews WHERE driver_id = ? ORDER BY id DESC LIMIT ?";
                 $review_stmt = $conn->prepare($review_query);
-                $review_stmt->bind_param('i', $driver_id);
+                $review_stmt->bind_param('ii', $driver_id, $limit);
                 $review_stmt->execute();
                 $review_result = $review_stmt->get_result();
 
@@ -91,7 +93,7 @@ $stmt->close();
                             default => ['Unacceptable', 'danger'],
                         };
                 ?>
-                    <div class="mb-4 border-bottom pb-3">
+                    <div class="mb-4 border-bottom pb-3 review-item">
                         <div class="d-flex align-items-center mb-2">
                             <div class="me-2">
                                 <?php
@@ -115,7 +117,70 @@ $stmt->close();
 
                 $review_stmt->close();
                 ?>
+
+                <!-- See More Button -->
+                <button id="seeMoreBtn" class="btn btn-link text-decoration-none text-center" style="width: 100%;">See More</button>
+
+                <!-- Hidden Reviews Section -->
+                <div id="extraReviews" style="display: none;">
+                    <?php
+                    // Fetch additional reviews beyond the initial 3
+                    $review_query = "SELECT review_name, review_message, rating FROM reviews WHERE driver_id = ? ORDER BY id DESC LIMIT ?, 9999";
+                    $review_stmt = $conn->prepare($review_query);
+                    $review_stmt->bind_param('ii', $driver_id, $limit);
+                    $review_stmt->execute();
+                    $review_result = $review_stmt->get_result();
+
+                    if ($review_result->num_rows > 0):
+                        while ($row = $review_result->fetch_assoc()):
+                            $stars = (int) $row['rating'];
+                            $label = match ($stars) {
+                                5 => ['Excellent', 'success'],
+                                4 => ['Good', 'primary'],
+                                3 => ['Average', 'info'],
+                                2 => ['Poor', 'warning'],
+                                default => ['Unacceptable', 'danger'],
+                            };
+                    ?>
+                        <div class="mb-4 border-bottom pb-3 review-item">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-2">
+                                    <?php
+                                    for ($i = 1; $i <= 5; $i++) {
+                                        echo $i <= $stars
+                                            ? '<i class="fas fa-star text-warning"></i>'
+                                            : '<i class="far fa-star text-warning"></i>';
+                                    }
+                                    ?>
+                                </div>
+                                <span class="badge bg-<?= $label[1] ?>"><?= $label[0] ?></span>
+                            </div>
+                            <p class="mb-1 fw-bold mb-0"><?= htmlspecialchars($row['review_name']) ?></p>
+                            <p class="mb-0"><?= htmlspecialchars($row['review_message']) ?></p>
+                        </div>
+                    <?php
+                        endwhile;
+                    endif;
+
+                    $review_stmt->close();
+                    ?>
+                </div>
             </div>
         </div>
     </div>
 </main>
+
+<script>
+    document.getElementById('seeMoreBtn').addEventListener('click', function() {
+        var extraReviews = document.getElementById('extraReviews');
+        var button = document.getElementById('seeMoreBtn');
+
+        if (extraReviews.style.display === 'none') {
+            extraReviews.style.display = 'block';
+            button.textContent = 'See Less';
+        } else {
+            extraReviews.style.display = 'none';
+            button.textContent = 'See More';
+        }
+    });
+</script>

@@ -1,6 +1,4 @@
-<?php include_once('template/mainheader.php')
-
-?>
+<?php include_once('template/mainheader.php') ?>
 
 <main>
     <div class="position-relative w-100 vh-100">
@@ -37,33 +35,36 @@
     <div class="modal fade" id="sosModal" tabindex="-1" aria-labelledby="sosModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-white" style="background-color: #dc3545;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="sosModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Emergency Alert</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="fs-5 mb-0 text-center">Are you in danger or need urgent help?</p>
-                    <p class="text-center">An alert will be sent to the driver and GoTranspo support.</p>
-
-                    <!-- Emergency Type Selection -->
-                    <div class="mb-3">
-                        <label for="emergencyType" class="form-label">Select Emergency Type</label>
-                        <select class="form-select" id="emergencyType" name="emergency_type" required>
-                            <option value="fire">Fire</option>
-                            <option value="accident">Accident</option>
-                            <option value="mechanical_issue">Mechanical Issue</option>
-                            <option value="medical">Medical Emergency</option>
-                            <option value="other">Other</option>
-                        </select>
+                <form action="send_alert.php" method="post"> <!-- FORM START -->
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="sosModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Emergency Alert</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
-                    <form action="send_alert.php" method="post">
-                        <input type="hidden" name="driver_id" value="<?php echo $driver_id; ?>"> <!-- Pass Driver ID if needed -->
+
+                    <div class="modal-body">
+                        <p class="fs-5 mb-0 text-center">Are you in danger or need urgent help?</p>
+                        <p class="text-center">An alert will be sent to the driver and GoTranspo support.</p>
+
+                        <!-- Emergency Type Selection -->
+                        <div class="mb-3">
+                            <label for="emergencyType" class="form-label">Select Emergency Type</label>
+                            <select class="form-select" id="emergencyType" name="emergency_type" required>
+                                <option value="fire">Fire</option>
+                                <option value="accident">Accident</option>
+                                <option value="mechanical_issue">Mechanical Issue</option>
+                                <option value="medical">Medical Emergency</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="driver_id" value="<?php echo htmlspecialchars($user_id); ?>">
+                    </div>
+
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-dark px-4">Send Alert</button>
-                    </form>
-                </div>
+                    </div>
+                </form> 
             </div>
         </div>
     </div>
@@ -108,6 +109,20 @@
     </div>
 
 </main>
+
+<!-- Include SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if (isset($_GET['alert']) && $_GET['alert'] == 'sent'): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Alert Sent!',
+            text: 'Your emergency alert has been successfully sent.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php endif; ?>
 
 <?php if (isset($_SESSION['review_status'])): ?>
     <script>

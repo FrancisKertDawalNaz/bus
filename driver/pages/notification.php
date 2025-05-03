@@ -24,7 +24,6 @@ if (isset($_SESSION['driver_id'])) {
     $stmt->close();
 }
 
-// Fetch bookings
 $bookings = [];
 $booking_query = "SELECT origin, destination, bus_title, bus_no, seat_no FROM booking_tb ORDER BY id DESC";
 $booking_result = $conn->query($booking_query);
@@ -35,7 +34,6 @@ if ($booking_result && $booking_result->num_rows > 0) {
     }
 }
 
-// Fetch emergency alerts
 $alerts = [];
 $alert_query = "SELECT alert_message, created_at FROM alert_tb WHERE status = 'unread' ORDER BY created_at DESC";
 $alert_result = $conn->query($alert_query);
@@ -46,7 +44,6 @@ if ($alert_result && $alert_result->num_rows > 0) {
     }
 }
 
-// Fetch passenger username ONCE ONLY
 $query = "SELECT username FROM user_tb";
 $result = $conn->query($query);
 $passenger_name = "";
@@ -60,8 +57,7 @@ if (!isset($_SESSION['driver_id'])) {
 }
 
 $driver_id = $_SESSION['driver_id'];
-$image_path = '../uploads/default_driver.png';  
-
+$image_path = '../uploads/default_driver.png';
 
 $query = "SELECT image_path FROM drivers WHERE id = ?";
 $stmt = $conn->prepare($query);
@@ -70,11 +66,10 @@ $stmt->execute();
 $stmt->bind_result($image_path);
 
 if ($stmt->fetch()) {
-    
     if (!empty($image_path) && file_exists('../uploads/' . $image_path)) {
-        $image_path = '../uploads/' . $image_path; 
+        $image_path = '../uploads/' . $image_path;
     } else {
-        $image_path = '../uploads/default_driver.png';  
+        $image_path = '../uploads/default_driver.png';
     }
 }
 
@@ -83,7 +78,6 @@ $stmt->close();
 
 <main style="height: 100vh; overflow: hidden;">
     <div class="d-flex" style="height: 100%;">
-        <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
             <div class="text-center mb-4">
                 <img src="../assets/images/logo.png" alt="Logo" class="img-fluid" style="max-width: 150px;">
@@ -94,16 +88,14 @@ $stmt->close();
                 <li><a href="./account.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-user me-2"></i> Account</a></li>
                 <li><a href="./reviews.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-star me-2"></i> Reviews</a></li>
                 <li><a href="./tracking.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-location-arrow me-2"></i> GPS Tracking</a></li>
-                <li><a href="./reports.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-file-alt me-2"></i> Reports</a></li> <!-- New: Reports -->
+                <li><a href="./reports.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-file-alt me-2"></i> Reports</a></li>
             </ul>
-
             <ul class="list-unstyled mt-auto">
                 <li><a href="#" class="text-white d-flex align-items-center py-2"><i class="fas fa-life-ring me-2"></i> Help</a></li>
                 <li><a href="./index.php" class="text-white d-flex align-items-center py-2"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
             </ul>
         </nav>
 
-        <!-- Main Content -->
         <div class="flex-fill p-4" style="margin-left: 250px; height: 100vh; overflow-y: auto; background-color: #f0f8ff;">
             <div class="d-flex justify-content-between align-items-center p-3 mb-4" style="background-color: #7dd87d; border-radius: 10px;">
                 <div class="text-white">
@@ -111,7 +103,6 @@ $stmt->close();
                     <small>Here are your latest notifications</small>
                 </div>
                 <div class="d-flex align-items-center">
-                    <!-- Notification Bell Icon as Button -->
                     <button type="button" class="btn btn-link text-white me-3" data-bs-toggle="modal" data-bs-target="#emergencyAlertModal" style="text-decoration: none;">
                         <i class="fas fa-bell fa-lg"></i>
                     </button>
@@ -119,7 +110,6 @@ $stmt->close();
                 </div>
             </div>
 
-            <!-- Modal for Emergency Alerts -->
             <div class="modal fade" id="emergencyAlertModal" tabindex="-1" aria-labelledby="emergencyAlertModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -131,7 +121,6 @@ $stmt->close();
                         </div>
                         <div class="modal-body">
                             <?php
-                            // Fetch the latest emergency alert only (no duplicate username fetching here)
                             $latest_alert_query = "SELECT alert_message, created_at FROM alert_tb WHERE status = 'unread' ORDER BY created_at DESC LIMIT 1";
                             $latest_alert_result = $conn->query($latest_alert_query);
 
@@ -156,13 +145,17 @@ $stmt->close();
                 </div>
             </div>
 
-            <!-- Booking Notifications -->
             <div class="card p-4">
                 <h4 class="mb-4">Booking Notifications</h4>
 
                 <?php if (!empty($bookings)): ?>
+                    <?php $count = 0; ?>
                     <?php foreach ($bookings as $booking): ?>
-                        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" role="alert">
+                        <?php
+                            $count++;
+                            $hiddenClass = ($count > 5) ? 'd-none extra-booking' : '';
+                        ?>
+                        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3 booking-item <?php echo $hiddenClass; ?>" role="alert">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-ticket-alt me-2"></i>
                                 <div>
@@ -177,13 +170,32 @@ $stmt->close();
                             </div>
                         </div>
                     <?php endforeach; ?>
+
+                    <?php if ($count > 5): ?>
+                        <div class="text-center mt-3">
+                            <button id="seeMoreBtn" class="btn btn-outline-primary">See More</button>
+                        </div>
+                    <?php endif; ?>
                 <?php else: ?>
                     <div class="alert alert-secondary" role="alert">
                         No new bookings yet.
                     </div>
                 <?php endif; ?>
             </div>
-
         </div>
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const seeMoreBtn = document.getElementById('seeMoreBtn');
+        if (seeMoreBtn) {
+            seeMoreBtn.addEventListener('click', function () {
+                document.querySelectorAll('.extra-booking').forEach(function (item) {
+                    item.classList.remove('d-none');
+                });
+                this.style.display = 'none';
+            });
+        }
+    });
+</script>
