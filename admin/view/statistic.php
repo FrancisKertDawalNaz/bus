@@ -1,4 +1,54 @@
-<?php include '../template/header.php'; ?>
+<?php include '../template/header.php';
+?>
+
+<?php
+include_once('../../connection.php');
+
+$tripQuery = "SELECT COUNT(*) AS total_trips FROM booking_tb";
+$tripResult = $conn->query($tripQuery);
+$tripCount = $tripResult->fetch_assoc()['total_trips'] ?? 0;
+
+$earningQuery = "SELECT SUM(bus_price) AS total_earnings FROM booking_tb";
+$earningResult = $conn->query($earningQuery);
+$totalEarnings = $earningResult->fetch_assoc()['total_earnings'] ?? 0;
+
+$availableBus = 4;
+?>
+
+<?php
+// Get monthly booking counts
+$monthlyData = [];
+$bookingChartQuery = "
+    SELECT MONTH(booking_date) AS month, COUNT(*) AS total
+    FROM booking_tb
+    GROUP BY MONTH(booking_date)
+    ORDER BY month
+";
+$bookingChartResult = $conn->query($bookingChartQuery);
+while ($row = $bookingChartResult->fetch_assoc()) {
+    $monthlyData[(int)$row['month']] = $row['total'];
+}
+
+// Fill months with 0 if no data
+$bookingsPerMonth = [];
+for ($i = 1; $i <= 12; $i++) {
+    $bookingsPerMonth[] = $monthlyData[$i] ?? 0;
+}
+?>
+
+<?php
+include_once('../../connection.php');
+
+// Count total users
+$userQuery = "SELECT COUNT(*) AS total_users FROM user_tb";
+$userResult = $conn->query($userQuery);
+$userData = $userResult->fetch_assoc();
+
+$totalUsers = $userData['total_users'] ?? 0;
+?>
+
+
+
 
 <main style="height: 100vh; overflow: hidden;">
     <div class="d-flex" style="height: 100%;">
@@ -21,8 +71,15 @@
 
 
             <ul class="list-unstyled mt-auto">
-                <li><a href="../pages/index.php" class="text-white d-flex align-items-center py-2"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                <li>
+                    <a href="../pages/index.php" onclick="confirmLogout()" class="text-white d-flex align-items-center py-2">
+                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </a>
+                </li>
             </ul>
+
+
+
         </nav>
 
         <!-- Main content -->
@@ -48,7 +105,7 @@
                     <div class="card text-white bg-primary shadow-sm">
                         <div class="card-body">
                             <h6 class="card-title">Book Trip</h6>
-                            <h4 class="card-text">120</h4>
+                            <h4 class="card-text"><?= $tripCount ?></h4>
                         </div>
                     </div>
                 </div>
@@ -56,7 +113,7 @@
                     <div class="card text-white bg-success shadow-sm">
                         <div class="card-body">
                             <h6 class="card-title">Available Bus</h6>
-                            <h4 class="card-text">25</h4>
+                            <h4 class="card-text"><?= $availableBus ?></h4>
                         </div>
                     </div>
                 </div>
@@ -64,11 +121,12 @@
                     <div class="card text-white bg-warning shadow-sm">
                         <div class="card-body">
                             <h6 class="card-title">Total Earnings</h6>
-                            <h4 class="card-text">$18,450</h4>
+                            <h4 class="card-text">$<?= number_format($totalEarnings, 2) ?></h4>
                         </div>
                     </div>
                 </div>
             </div>
+
 
             <div class="row">
                 <!-- Line Graph -->
@@ -94,15 +152,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Line Chart
     const lineCtx = document.getElementById('bookingLineChart').getContext('2d');
     const bookingLineChart = new Chart(lineCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
                 label: 'Bookings',
-                data: [50, 70, 90, 40, 60, 80],
+                data: <?= json_encode($bookingsPerMonth) ?>,
                 backgroundColor: 'rgba(125, 216, 125, 0.2)',
                 borderColor: '#7dd87d',
                 borderWidth: 2,
@@ -120,16 +177,15 @@
         }
     });
 
-    // Doughnut Chart
     const doughnutCtx = document.getElementById('bookingDoughnutChart').getContext('2d');
     const bookingDoughnutChart = new Chart(doughnutCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Online', 'Visit'],
+            labels: ['Active Users'],
             datasets: [{
-                label: 'Booking Method',
-                data: [120, 90],
-                backgroundColor: ['#4caf50', '#2196f3'],
+                label: 'Users',
+                data: [<?= $totalUsers ?>],
+                backgroundColor: ['#4caf50'],
                 borderWidth: 1
             }]
         },
