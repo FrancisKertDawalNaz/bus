@@ -1,8 +1,34 @@
 <?php include '../template/header.php'; ?>
 
-<main style="height: 100vh; overflow: hidden;">
-    <div class="d-flex" style="height: 100%;">
+<?php
+if (isset($_GET['status'])) {
+    $status = $_GET['status'];
+}
+?>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php if (isset($status) && $status === 'success'): ?>
+        Swal.fire({
+            icon: 'success',
+            title: 'Updated Successfully!',
+            text: 'Your profile was updated.',
+            confirmButtonColor: '#3085d6'
+        });
+    <?php elseif (isset($status) && $status === 'error'): ?>
+        Swal.fire({
+            icon: 'error',
+            title: 'Update Failed',
+            text: 'Please try again.',
+            confirmButtonColor: '#d33'
+        });
+    <?php endif; ?>
+});
+</script>
+
+
+<main style="height: 100vh; overflow: hidden;">
+    <div class="d-flex" style="height: 100%;"> 
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
             <div class="text-center mb-4">
@@ -17,7 +43,6 @@
                 <li><a href="./network.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-network-wired me-2"></i> Our Network</a></li>
                 <li><a href="./report.php" class="sidebar-link text-white d-flex align-items-center py-2"><i class="fas fa-file-alt me-2"></i> Report Management</a></li>
             </ul>
-
 
             <ul class="list-unstyled mt-auto">
                 <li><a href="../pages/index.php" class="text-white d-flex align-items-center py-2"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
@@ -47,7 +72,7 @@
                     <div class="card-body text-center">
                         <h6 class="mb-3">Upload Profile Image</h6>
                         <img src="../../driver/assets/images/user.png" alt="Profile Preview" class="rounded-circle mb-3" style="width: 100px; height: 100px;">
-                        <input type="file" class="form-control w-50 mx-auto" accept="image/*">
+                        <input type="file" class="form-control w-50 mx-auto" accept="image/*" name="driver_image">
                     </div>
                 </div>
 
@@ -55,18 +80,18 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h6 class="mb-3">Driver Information</h6>
-                        <form>
+                        <form action="../function/update_driver.php" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="driverName" class="form-label">Driver Name</label>
-                                <input type="text" class="form-control" id="driverName" placeholder="Enter driver name">
+                                <input type="text" class="form-control" id="driverName" name="driver_name" placeholder="Enter driver name" required>
                             </div>
                             <div class="mb-3">
                                 <label for="driverId" class="form-label">Driver ID</label>
-                                <input type="text" class="form-control" id="driverId" placeholder="Enter driver ID">
+                                <input type="text" class="form-control" id="driverId" name="driver_id" placeholder="Enter driver ID" required>
                             </div>
                             <div class="mb-3">
                                 <label for="driverPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="driverPassword" placeholder="Enter new password">
+                                <input type="password" class="form-control" id="driverPassword" name="password" placeholder="Enter new password" required>
                             </div>
                             <button type="submit" class="btn btn-success">Update Info</button>
                         </form>
@@ -85,4 +110,5 @@
                 </div>
             </div>
         </div>
+    </div>
 </main>
