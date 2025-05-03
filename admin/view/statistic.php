@@ -4,7 +4,7 @@
     <div class="d-flex" style="height: 100%;">
 
         <!-- Sidebar -->
-        <nav class="text-white p-3" style="width: 250px; background-color: #07416b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
+        <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
             <div class="text-center mb-4">
                 <img src="../../asset/images/logo.png" alt="Logo" class="img-fluid" style="max-width: 150px;">
             </div>

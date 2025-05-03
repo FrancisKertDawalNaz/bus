@@ -1,7 +1,23 @@
-<?php include '../template/header.php'; ?>
+<?php 
+include '../template/header.php'; 
+include_once('../../connection.php');
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['admin_id'])) {
+    die("Unauthorized access.");
+}
+
+// Fetch booking data
+$booking_query = "SELECT booking_date, bus_no, bus_price, seat_no, booking_id FROM booking_tb ORDER BY booking_date DESC";
+$booking_result = $conn->query($booking_query);
+?>
 
 <main style="height: 100vh; overflow: hidden;">
     <div class="d-flex" style="height: 100%;">
+
 
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #07416b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
@@ -75,30 +91,36 @@
                             <tr>
                                 <th>Booking Date</th>
                                 <th>Bus No</th>
-                                <th>Payment Method</th>
                                 <th>Bus Price</th>
                                 <th>Seat No</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Sample row -->
-                            <tr>
-                                <td>2025-04-30</td>
-                                <td>BUS-102</td>
-                                <td>Credit Card</td>
-                                <td>$45.00</td>
-                                <td>12A</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary me-1">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Delete
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- More rows can be added dynamically -->
+                            <?php
+                            if ($booking_result->num_rows > 0):
+                                while ($row = $booking_result->fetch_assoc()):
+                            ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['booking_date']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['bus_no']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['bus_price']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['seat_no']); ?></td>
+                                    <td>
+                                        <a href="edit_booking.php?id=<?php echo $row['booking_id']; ?>" class="btn btn-sm btn-primary me-1">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="delete_booking.php?id=<?php echo $row['booking_id']; ?>" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php
+                                endwhile;
+                            else:
+                                echo "<tr><td colspan='5' class='text-center text-muted'>No bookings available</td></tr>";
+                            endif;
+                            ?>
                         </tbody>
                     </table>
                 </div>
