@@ -1,0 +1,19 @@
+.full-bg {
+    height: 100vh;
+    background-image: url('asset/images/buss.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.sidebar-link {
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.3s, padding-left 0.3s;
+    border-radius: 5px;
+  }
+  
+  .sidebar-link:hover {
+    background-color: #003580; 
+    padding-left: 10px; 
+    text-decoration: none; 
+  }
