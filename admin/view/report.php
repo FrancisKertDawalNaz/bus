@@ -71,6 +71,22 @@ if (isset($_SESSION['driver_id'])) {
     }
     $stmt->close();
 }
+// Fetch alerts from the database
+$query = "SELECT alert_tb.*, user_tb.username 
+          FROM alert_tb 
+          INNER JOIN user_tb ON alert_tb.user_id = user_tb.id 
+          ORDER BY alert_tb.created_at DESC 
+          LIMIT 3";
+
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$alerts = [];
+
+while ($row = $result->fetch_assoc()) {
+    $alerts[] = $row;
+}
+$stmt->close();
 ?>
 
 
@@ -119,34 +135,41 @@ if (isset($_SESSION['driver_id'])) {
                 </div>
             </div>
             <!-- Reports Section -->
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Bus ID</th>
-                            <th>Emergency Type</th>
-                            <th>Report Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($reports)): ?>
-                            <tr>
-                                <td colspan="4" class="text-center">No reports available</td>
-                            </tr>
-                        <?php else: ?>
-                            <?php foreach ($reports as $report): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($report['username']); ?></td>
-                                    <td><?php echo htmlspecialchars($report['bus_id']); ?></td>
-                                    <td><?php echo htmlspecialchars($report['emergency_type']); ?></td>
-                                    <td><?php echo htmlspecialchars($report['report_time']); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <div class="card p-4">
+                <h4 class="mb-4">User Reports</h4>
+
+                <?php foreach ($alerts as $alert): ?>
+                    <div class="mb-4 border-bottom pb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge <?php echo ($alert['emergency_type'] == 'fire') ? 'bg-danger' : ($alert['emergency_type'] == 'accident' ? 'bg-warning' : 'bg-info'); ?>">
+                                <?php echo ucfirst($alert['emergency_type']); ?>
+                            </span>
+                        </div>
+                        <p class="mb-1 fw-bold mb-0"><?php echo htmlspecialchars($alert['username']); ?></p>
+                        <p class="mb-1"><strong>Alert Message:</strong> <?php echo htmlspecialchars($alert['alert_message']); ?></p>
+                        <p class="mb-1"><strong>Emergency Type:</strong> <?php echo ucfirst(htmlspecialchars($alert['emergency_type'])); ?></p>
+                        <p class="mb-0"><strong>Created At:</strong> <?php echo htmlspecialchars($alert['created_at']); ?></p>
+                    </div>
+                <?php endforeach; ?>
+
+                <!-- "Show All" Button -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-primary" id="showAllReports">Show All</button>
+                </div>
+
+                <!-- Full List of Reports (Initially hidden) -->
+                <div id="additionalReports" style="display: none;">
+                    <!-- More reports will be shown here when clicked -->
+                </div>
+
             </div>
         </div>
     </div>
 </main>
+
+<script>
+    document.getElementById('showAllReports').addEventListener('click', function() {
+        document.getElementById('additionalReports').style.display = 'block';
+        this.style.display = 'none'; 
+    });
+</script>

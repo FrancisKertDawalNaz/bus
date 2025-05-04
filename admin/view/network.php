@@ -1,7 +1,20 @@
-<?php include '../template/header.php'; ?>
+<?php include '../template/header.php'; 
+include_once('../../connection.php');
+
+// Fetch drivers from the database
+$drivers = [];
+$query = "SELECT driver_id, driver_name FROM drivers";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $drivers[] = $row;
+}
+$stmt->close();
+?>
 
 <main style="height: 100vh; overflow: hidden;">
-    <div class="d-flex" style="height: 100%;">
+    <div class="d-flex" style="height: 100%;"> 
 
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
@@ -63,9 +76,38 @@
                         <li>HM</li>
                     </ul>
                     <!-- View Drivers Action Button -->
-                    <a href="./view_drivers.php" class="btn btn-primary mt-2">View Drivers</a>
+                    <a href="#" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#driversModal">View Drivers</a>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+<!-- Modal for Viewing Drivers -->
+<div class="modal fade" id="driversModal" tabindex="-1" aria-labelledby="driversModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="driversModalLabel">View Drivers</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <?php foreach ($drivers as $driver): ?>
+            <li class="list-group-item">
+                <strong>Driver Name:</strong> <?php echo $driver['driver_name']; ?> 
+                <br><strong>Driver ID:</strong> <?php echo $driver['driver_id']; ?>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS and CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

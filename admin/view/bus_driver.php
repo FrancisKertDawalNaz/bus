@@ -1,7 +1,20 @@
-<?php include '../template/header.php'; ?>
+<?php 
+include '../template/header.php'; 
+include_once('../../connection.php'); 
+
+$latestBooking = null;
+$query = "SELECT origin, destination FROM booking_tb ORDER BY booking_date DESC LIMIT 1";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    $latestBooking = $row;
+}
+$stmt->close();
+?>
 
 <main style="height: 100vh; overflow: hidden;">
-    <div class="d-flex" style="height: 100%;">
+    <div class="d-flex" style="height: 100%;"> 
 
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
@@ -48,40 +61,42 @@
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize map
-        var map = L.map('map').setView([14.5995, 120.9842], 13); // Coordinates for Manila
+// Pass the PHP variable to JavaScript
+const latestBooking = <?php echo json_encode($latestBooking); ?>;
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+document.addEventListener('DOMContentLoaded', async function () {
+    const map = L.map('map').setView([14.5995, 120.9842], 13);  // Default view (Manila)
 
-        // Add default marker at Manila
-        var defaultMarker = L.marker([14.5995, 120.9842]).addTo(map)
-            .bindPopup('Default location: Manila')
-            .openPopup();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-        // Check if geolocation is supported
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lon = position.coords.longitude;
+    if (latestBooking) {
+        try {
+            // Geocode origin and destination of the latest booking
+            const originCoords = await geocodeAddress(latestBooking.origin);
+            const destCoords = await geocodeAddress(latestBooking.destination);
 
-                // Remove the default marker and set map view to user's location
-                map.removeLayer(defaultMarker);
-                map.setView([lat, lon], 16); // Zoom in
+            if (originCoords && destCoords) {
+                L.marker(originCoords).addTo(map).bindPopup(`Origin: ${latestBooking.origin}`);
+                L.marker(destCoords).addTo(map).bindPopup(`Destination: ${latestBooking.destination}`);
 
-                // Add user's location marker
-                L.marker([lat, lon]).addTo(map)
-                    .bindPopup('You are here!')
-                    .openPopup();
-            }, function(error) {
-                console.error('Error getting location: ' + error.message);
-            });
-        } else {
-            alert('Geolocation is not supported by your browser.');
+                const line = L.polyline([originCoords, destCoords], { color: 'blue' }).addTo(map);
+                map.fitBounds(line.getBounds());
+            }
+        } catch (error) {
+            console.error('Error geocoding latest booking', error);
         }
-    });
-</script>
+    }
 
+    // Function to geocode an address
+    async function geocodeAddress(address) {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+        const data = await response.json();
+        if (data.length > 0) {
+            return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        }
+        return null;
+    }
+});
+</script>
