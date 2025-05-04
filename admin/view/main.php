@@ -9,7 +9,7 @@ include '../template/header.php';
 ?>
 
 <main style="height: 100vh; overflow: hidden;">
-    <div class="d-flex" style="height: 100%;"> 
+    <div class="d-flex" style="height: 100%;">
         <!-- Sidebar -->
         <nav class="text-white p-3" style="width: 250px; background-color: #001f5b; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto;">
             <div class="text-center mb-4">
@@ -71,6 +71,73 @@ include '../template/header.php';
                 </div>
             </div>
 
+            <!-- Edit User Modal (Editable Form) -->
+            <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form action="../function/update_booking.php" method="POST">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="editUserModalLabel">Edit Booking Details</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="original_booking_date" id="originalBookingDate"> <!-- Primary key or identifier -->
+
+                                <div class="mb-3">
+                                    <label for="bookingDate" class="form-label">Booking Date</label>
+                                    <input type="text" class="form-control" id="bookingDate" name="booking_date" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="busNo" class="form-label">Bus No</label>
+                                    <input type="text" class="form-control" id="busNo" name="bus_no" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="busPrice" class="form-label">Bus Price</label>
+                                    <input type="text" class="form-control" id="busPrice" name="bus_price" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="seatNo" class="form-label">Seat No</label>
+                                    <input type="text" class="form-control" id="seatNo" name="seat_no" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete the booking for Bus No: <strong id="modalBusNo"></strong> on <strong id="modalBookingDate"></strong>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
             <!-- Booking Table -->
             <div class="card p-3">
                 <h5 class="mb-3">Bus Bookings</h5>
@@ -110,12 +177,28 @@ include '../template/header.php';
                                 echo "<td>" . htmlspecialchars($row['seat_no']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['name']) . "</td>";
                                 echo "<td>
-                                        <button class='btn btn-sm btn-primary me-1'>
+                                        <button 
+                                             class='btn btn-sm btn-primary me-1 edit-btn'
+                                             data-bs-toggle='modal'
+                                             data-bs-target='#editUserModal'
+                                             data-booking-date='" . htmlspecialchars($row['booking_date']) . "'
+                                             data-bus-no='" . htmlspecialchars($row['bus_no']) . "'
+                                             data-bus-price='" . htmlspecialchars($row['bus_price']) . "'
+                                             data-seat-no='" . htmlspecialchars($row['seat_no']) . "'
+                                             data-name='" . htmlspecialchars($row['name']) . "'>
                                             <i class='fas fa-edit'></i> Edit
                                         </button>
-                                        <button class='btn btn-sm btn-danger'>
-                                            <i class='fas fa-trash-alt'></i> Delete
+
+                                        <button 
+                                             class='btn btn-sm btn-danger me-1 delete-btn' 
+                                             data-bs-toggle='modal' 
+                                             data-bs-target='#deleteModal'
+                                             data-booking-date='" . htmlspecialchars($row['booking_date']) . "' 
+                                             data-bus-no='" . htmlspecialchars($row['bus_no']) . "'>
+                                             <i class='fas fa-trash-alt'></i> Delete
                                         </button>
+
+                                        
                                       </td>";
                                 echo "</tr>";
                             }
@@ -194,6 +277,96 @@ include '../template/header.php';
         document.getElementById('seeMoreBtn').style.display = 'block';
     }
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll('.edit-btn');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('originalBookingDate').value = button.getAttribute('data-booking-date');
+                document.getElementById('bookingDate').value = button.getAttribute('data-booking-date');
+                document.getElementById('busNo').value = button.getAttribute('data-bus-no');
+                document.getElementById('busPrice').value = button.getAttribute('data-bus-price');
+                document.getElementById('seatNo').value = button.getAttribute('data-seat-no');
+                document.getElementById('name').value = button.getAttribute('data-name');
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the booking details from data attributes
+                const bookingDate = this.getAttribute('data-booking-date');
+                const busNo = this.getAttribute('data-bus-no');
+
+                // Set the booking details in the modal
+                document.getElementById('modalBookingDate').textContent = bookingDate;
+                document.getElementById('modalBusNo').textContent = busNo;
+
+                // Set the delete URL for the confirmation button
+                const confirmDeleteUrl = `../function/delete_booking.php?booking_date=${encodeURIComponent(bookingDate)}&bus_no=${encodeURIComponent(busNo)}`;
+                document.getElementById('confirmDeleteBtn').setAttribute('href', confirmDeleteUrl);
+            });
+        });
+    });
+</script>
+
+
+
+<?php if (isset($_GET['update']) && $_GET['update'] === 'success'): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Updated!',
+            text: 'Booking details have been updated.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php elseif (isset($_GET['update']) && $_GET['update'] === 'fail'): ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Update Failed',
+            text: 'Something went wrong while updating.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php endif; ?>
+
+<?php if (isset($_GET['delete']) && $_GET['delete'] === 'success'): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'The booking has been successfully deleted.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php elseif (isset($_GET['delete']) && $_GET['delete'] === 'fail'): ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Delete Failed',
+            text: 'There was an issue deleting the booking.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php elseif (isset($_GET['delete']) && $_GET['delete'] === 'error'): ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'There was an error processing your request.',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php endif; ?>
+
+
 
 <?php
 // If the admin is not logged in, destroy the session (for security reasons)
