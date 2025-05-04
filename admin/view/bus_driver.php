@@ -61,11 +61,10 @@ $stmt->close();
 </main>
 
 <script>
-// Pass the PHP variable to JavaScript
 const latestBooking = <?php echo json_encode($latestBooking); ?>;
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const map = L.map('map').setView([14.5995, 120.9842], 13);  // Default view (Manila)
+    const map = L.map('map').setView([14.5995, 120.9842], 13); 
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -73,7 +72,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (latestBooking) {
         try {
-            // Geocode origin and destination of the latest booking
             const originCoords = await geocodeAddress(latestBooking.origin);
             const destCoords = await geocodeAddress(latestBooking.destination);
 
@@ -89,7 +87,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Function to geocode an address
     async function geocodeAddress(address) {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
         const data = await response.json();

@@ -1,7 +1,7 @@
 <?php include '../template/header.php'; 
 include_once('../../connection.php');
 
-// Fetch drivers from the database
+
 $drivers = [];
 $query = "SELECT driver_id, driver_name FROM drivers";
 $stmt = $conn->prepare($query);
@@ -38,7 +38,7 @@ $stmt->close();
         <!-- Main content -->
         <div class="flex-fill p-4" style="margin-left: 250px; height: 100vh; overflow-y: auto; background-color: #f0f8ff; display: flex; flex-direction: column;">
 
-            <!-- Income & Spending Section -->
+        
             <div class="d-flex justify-content-between align-items-center p-3 mb-4" style="background-color: #7dd87d; border-radius: 10px;">
                 <div class="text-white">
                     <h5>Income & Spending Overview</h5>
@@ -55,17 +55,16 @@ $stmt->close();
                 </div>
             </div>
 
-            <!-- Debit/Unpaid Subscription (on the right) -->
+           
             <div class="d-flex justify-content-between align-items-center p-3 mb-4" style="background-color: #ffcc00; border-radius: 10px;">
                 <div class="text-dark">
                     <h5>Debit/Unpaid Subscription</h5>
                     <small>Manage your subscriptions here.</small>
-                    <!-- Display amount at the bottom -->
                     <p><strong>Amount Due: 50,000</strong></p>
                 </div>
             </div>
 
-            <!-- Bus Companies Section (at the bottom) -->
+         
             <div class="d-flex justify-content-between align-items-center p-3" style="background-color: #f0f8ff; border-top: 2px solid #07416b;">
                 <div class="text-dark">
                     <h5>Bus Companies</h5>
@@ -75,7 +74,7 @@ $stmt->close();
                         <li>SINCRODA</li>
                         <li>HM</li>
                     </ul>
-                    <!-- View Drivers Action Button -->
+                    
                     <a href="#" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#driversModal">View Drivers</a>
                 </div>
             </div>
@@ -83,7 +82,7 @@ $stmt->close();
     </div>
 </main>
 
-<!-- Modal for Viewing Drivers -->
+
 <div class="modal fade" id="driversModal" tabindex="-1" aria-labelledby="driversModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

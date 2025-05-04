@@ -2,7 +2,6 @@
 include '../template/header.php'; 
 include_once('../../connection.php'); 
 
-// Fetch total reviews and average rating
 $review_count_query = "SELECT COUNT(*) FROM reviews";
 $rating_query = "SELECT AVG(rating) FROM reviews";
 
@@ -12,7 +11,6 @@ $review_count = $review_count_result->fetch_row()[0];
 $rating_result = $conn->query($rating_query);
 $avg_rating = $rating_result->fetch_row()[0];
 
-// Fetch reviews
 $review_query = "SELECT id, review_name, review_message, rating FROM reviews ORDER BY id DESC";
 $review_result = $conn->query($review_query);
 ?>
@@ -57,7 +55,6 @@ $review_result = $conn->query($review_query);
                 </div>
             </div>
 
-            <!-- Feedback Overview -->
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div class="card p-3 shadow-sm">
@@ -76,7 +73,6 @@ $review_result = $conn->query($review_query);
                 </div>
             </div>
 
-            <!-- Feedback List -->
             <div class="card shadow-sm p-3">
                 <h5 class="mb-3">User Feedback</h5>
                 <div class="list-group">
@@ -124,7 +120,6 @@ $review_result = $conn->query($review_query);
     </div>
 </main>
 
-<!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

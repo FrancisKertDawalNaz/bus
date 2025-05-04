@@ -16,7 +16,7 @@ $availableBus = 4;
 ?>
 
 <?php
-// Get monthly booking counts
+
 $monthlyData = [];
 $bookingChartQuery = "
     SELECT MONTH(booking_date) AS month, COUNT(*) AS total
@@ -29,7 +29,7 @@ while ($row = $bookingChartResult->fetch_assoc()) {
     $monthlyData[(int)$row['month']] = $row['total'];
 }
 
-// Fill months with 0 if no data
+
 $bookingsPerMonth = [];
 for ($i = 1; $i <= 12; $i++) {
     $bookingsPerMonth[] = $monthlyData[$i] ?? 0;
@@ -39,7 +39,7 @@ for ($i = 1; $i <= 12; $i++) {
 <?php
 include_once('../../connection.php');
 
-// Count total users
+
 $userQuery = "SELECT COUNT(*) AS total_users FROM user_tb";
 $userResult = $conn->query($userQuery);
 $userData = $userResult->fetch_assoc();
@@ -98,7 +98,7 @@ $totalUsers = $userData['total_users'] ?? 0;
                     <img src="../../asset/images/adminpic.jpg" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px;">
                 </div>
             </div>
-            <!-- Info Boxes -->
+          
             <div class="row mb-4">
                 <div class="col-md-4 mb-3">
                     <div class="card text-white bg-primary shadow-sm">
@@ -128,7 +128,7 @@ $totalUsers = $userData['total_users'] ?? 0;
 
 
             <div class="row">
-                <!-- Line Graph -->
+               
                 <div class="col-md-8 mb-4">
                     <div class="card p-3">
                         <h5 class="mb-3">Monthly Bookings (Line Chart)</h5>
@@ -136,7 +136,7 @@ $totalUsers = $userData['total_users'] ?? 0;
                     </div>
                 </div>
 
-                <!-- Doughnut Chart -->
+          
                 <div class="col-md-4 mb-4">
                     <div class="card p-3">
                         <h5 class="mb-3">Active Users</h5>

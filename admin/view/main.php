@@ -71,7 +71,7 @@ include '../template/header.php';
                 </div>
             </div>
 
-            <!-- Edit User Modal (Editable Form) -->
+            
             <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -116,7 +116,7 @@ include '../template/header.php';
                 </div>
             </div>
 
-            <!-- Delete Confirmation Modal -->
+            
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -135,10 +135,6 @@ include '../template/header.php';
                 </div>
             </div>
 
-
-
-
-            <!-- Booking Table -->
             <div class="card p-3">
                 <h5 class="mb-3">Bus Bookings</h5>
                 <div class="table-responsive" id="bookingTable">
@@ -168,7 +164,6 @@ include '../template/header.php';
                                 }
                             }
 
-                            // Show first 4 rows initially
                             foreach (array_slice($allRows, 0, 4) as $row) {
                                 echo "<tr class='booking-row'>";
                                 echo "<td>" . htmlspecialchars($row['booking_date']) . "</td>";
@@ -208,12 +203,12 @@ include '../template/header.php';
                         </tbody>
                     </table>
 
-                    <!-- See More Button -->
+                
                     <div id="seeMoreBtn" class="text-center mt-3">
                         <button class="btn btn-primary" onclick="showMoreRows()">See More</button>
                     </div>
 
-                    <!-- See Less Button (Initially Hidden) -->
+
                     <div id="seeLessBtn" class="text-center mt-3" style="display: none;">
                         <button class="btn btn-secondary" onclick="showLessRows()">See Less</button>
                     </div>
@@ -229,7 +224,7 @@ include '../template/header.php';
     let displayedRowsCount = 4;
 
     function showMoreRows() {
-        // Show the remaining rows
+
         let rowsToDisplay = allRows.slice(displayedRowsCount);
         let tableBody = document.querySelector('#bookingTable tbody');
         rowsToDisplay.forEach(row => {
@@ -255,13 +250,11 @@ include '../template/header.php';
 
         displayedRowsCount = allRows.length;
 
-        // Hide "See More" button and show "See Less" button
         document.getElementById('seeMoreBtn').style.display = 'none';
         document.getElementById('seeLessBtn').style.display = 'block';
     }
 
     function showLessRows() {
-        // Hide rows after the first 4
         let rows = document.querySelectorAll('.booking-row');
         rows.forEach((row, index) => {
             if (index >= 4) {
@@ -269,10 +262,8 @@ include '../template/header.php';
             }
         });
 
-        // Update displayedRowsCount
         displayedRowsCount = 4;
 
-        // Hide "See Less" button and show "See More" button
         document.getElementById('seeLessBtn').style.display = 'none';
         document.getElementById('seeMoreBtn').style.display = 'block';
     }
@@ -299,15 +290,10 @@ include '../template/header.php';
 
         deleteButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Get the booking details from data attributes
                 const bookingDate = this.getAttribute('data-booking-date');
                 const busNo = this.getAttribute('data-bus-no');
-
-                // Set the booking details in the modal
                 document.getElementById('modalBookingDate').textContent = bookingDate;
                 document.getElementById('modalBusNo').textContent = busNo;
-
-                // Set the delete URL for the confirmation button
                 const confirmDeleteUrl = `../function/delete_booking.php?booking_date=${encodeURIComponent(bookingDate)}&bus_no=${encodeURIComponent(busNo)}`;
                 document.getElementById('confirmDeleteBtn').setAttribute('href', confirmDeleteUrl);
             });
@@ -369,7 +355,7 @@ include '../template/header.php';
 
 
 <?php
-// If the admin is not logged in, destroy the session (for security reasons)
+
 if (!isset($_SESSION['admin_id'])) {
     session_destroy();
 }
