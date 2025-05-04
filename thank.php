@@ -1,5 +1,5 @@
 <?php
-// After booking is successful, show the thank you modal
+
 echo '<script>
   window.onload = function() {
     const modal = new bootstrap.Modal(document.getElementById("thankYouModal"));

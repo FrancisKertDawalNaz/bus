@@ -20,16 +20,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['login_success'] = true; 
-                header("Location: ../main.php"); // ✅ SUCCESS → main.php
+                header("Location: ../main.php"); 
                 exit;
             } else {
                 $_SESSION['login_failed'] = true; 
-                header("Location: ../index.php"); // ❌ ERROR → index.php
+                header("Location: ../index.php"); 
                 exit;
             }
         } else {
             $_SESSION['login_failed'] = true; 
-            header("Location: ../index.php"); // ❌ ERROR → index.php
+            header("Location: ../index.php"); 
             exit;
         }
     } else {

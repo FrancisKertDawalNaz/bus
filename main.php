@@ -110,7 +110,7 @@
 
 </main>
 
-<!-- Include SweetAlert CDN -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <?php if (isset($_GET['alert']) && $_GET['alert'] == 'sent'): ?>

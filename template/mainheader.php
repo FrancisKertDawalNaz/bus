@@ -86,7 +86,7 @@ $stmt->close();
                     <?php if (isset($_SESSION['booking_notification'])): ?>
                         <p><i class="bi bi-info-circle-fill text-primary me-2"></i> <?= $_SESSION['booking_notification'] ?></p>
 
-                        <!-- View Button Only if Notification Exists -->
+
                         <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#bookingSummaryModal" data-bs-dismiss="modal">
                             View Booking Summary
                         </button>
@@ -127,12 +127,12 @@ $stmt->close();
         </div>
     </div>
 
-    <!-- SweetAlert Script -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.getElementById('logoutButton').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent the default action (navigation)
+            e.preventDefault(); 
 
             Swal.fire({
                 icon: 'warning',
