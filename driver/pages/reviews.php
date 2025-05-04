@@ -15,7 +15,7 @@ $driver_id = $_SESSION['driver_id'];
 $driver_name = 'Guest';
 $image_path = '../uploads/default_driver.png';
 
-// Fetch driver's name
+
 $query = "SELECT driver_name, image_path FROM drivers WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('i', $driver_id);
@@ -75,7 +75,7 @@ $stmt->close();
                 <h4 class="mb-4">User Reviews</h4>
 
                 <?php
-                $limit = 3; // Limit the number of reviews initially displayed
+                $limit = 3; 
                 $review_query = "SELECT review_name, review_message, rating FROM reviews WHERE driver_id = ? ORDER BY id DESC LIMIT ?";
                 $review_stmt = $conn->prepare($review_query);
                 $review_stmt->bind_param('ii', $driver_id, $limit);
@@ -118,13 +118,13 @@ $stmt->close();
                 $review_stmt->close();
                 ?>
 
-                <!-- See More Button -->
+               
                 <button id="seeMoreBtn" class="btn btn-link text-decoration-none text-center" style="width: 100%;">See More</button>
 
-                <!-- Hidden Reviews Section -->
+                
                 <div id="extraReviews" style="display: none;">
                     <?php
-                    // Fetch additional reviews beyond the initial 3
+                    
                     $review_query = "SELECT review_name, review_message, rating FROM reviews WHERE driver_id = ? ORDER BY id DESC LIMIT ?, 9999";
                     $review_stmt = $conn->prepare($review_query);
                     $review_stmt->bind_param('ii', $driver_id, $limit);

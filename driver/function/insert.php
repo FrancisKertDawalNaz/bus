@@ -4,7 +4,7 @@ include '../../connection.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $driver_name = $_POST["driver_name"];
     $driver_id   = $_POST["driver_id"];
-    $password    = password_hash($_POST["password"], PASSWORD_DEFAULT); // Securely hash password
+    $password    = password_hash($_POST["password"], PASSWORD_DEFAULT); 
 
     $sql = "INSERT INTO drivers (driver_name, driver_id, password) VALUES ('$driver_name', '$driver_id', '$password')";
 

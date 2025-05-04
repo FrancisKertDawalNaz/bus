@@ -89,7 +89,6 @@ $stmt->close();
                         </span>
                         <input type="text" class="form-control border-start-0" placeholder="Search here...">
                     </div>
-                    <!-- Profile Image -->
                     <img src="<?php echo $image_path; ?>" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px;">
                 </div>
             </div>
@@ -105,19 +104,16 @@ $stmt->close();
                         </div>
                     </div>
 
-                    <!-- Driver Name -->
                     <div class="mb-3">
                         <label for="driver_name" class="form-label">Driver Name</label>
                         <input type="text" name="driver_name" id="driver_name" class="form-control" placeholder="Enter driver name" required>
                     </div>
 
-                    <!-- Driver ID -->
                     <div class="mb-3">
                         <label for="driver_id" class="form-label">Driver ID</label>
                         <input type="text" name="driver_id" id="driver_id" class="form-control" placeholder="Enter driver ID" required>
                     </div>
 
-                    <!-- Password -->
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>

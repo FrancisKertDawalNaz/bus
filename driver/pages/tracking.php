@@ -15,7 +15,7 @@ if (!isset($_SESSION['driver_id'])) {
 
 $driver_id = $_SESSION['driver_id'];
 
-// Get driver name
+
 $query = "SELECT driver_name FROM drivers WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('i', $driver_id);
@@ -26,7 +26,7 @@ if ($stmt->fetch()) {
 }
 $stmt->close();
 
-// Get driver image
+
 $image_path = '../uploads/default_driver.png';
 $query = "SELECT image_path FROM drivers WHERE id = ?";
 $stmt = $conn->prepare($query);
@@ -40,7 +40,7 @@ if ($stmt->fetch()) {
 }
 $stmt->close();
 
-// Get the latest origin and destination from bookings
+
 $latestBooking = null;
 $query = "SELECT origin, destination FROM booking_tb ORDER BY booking_date DESC LIMIT 1";
 $stmt = $conn->prepare($query);
@@ -103,13 +103,13 @@ $stmt->close();
     const latestBooking = <?php echo json_encode($latestBooking); ?>;
 </script>
 
-<!-- Leaflet.js CDN -->
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', async function () {
-    const map = L.map('map').setView([14.5995, 120.9842], 13);  // Default view (Manila)
+    const map = L.map('map').setView([14.5995, 120.9842], 13);  
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (latestBooking) {
         try {
-            // Geocode origin and destination of the latest booking
+          
             const originCoords = await geocodeAddress(latestBooking.origin);
             const destCoords = await geocodeAddress(latestBooking.destination);
 
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Function to geocode an address
+    
     async function geocodeAddress(address) {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
         const data = await response.json();
