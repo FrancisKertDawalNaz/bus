@@ -67,15 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
             <div class="container">
-                <!-- Upload Image -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body text-center">
-                        <h6 class="mb-3">Upload Profile Image</h6>
-                        <img src="../../driver/assets/images/user.png" alt="Profile Preview" class="rounded-circle mb-3" style="width: 100px; height: 100px;">
-                        <input type="file" class="form-control w-50 mx-auto" accept="image/*" name="driver_image">
-                    </div>
-                </div>
-
                 <!-- Driver Info -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
